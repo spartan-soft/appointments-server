@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Reservation;
+
+class ReservationController extends Controller
+{
+    public function index()
+    {
+        $reservations = Reservation::with(['user', 'client', 'service'])->get();
+
+        return response()->json($reservations);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'client_id' => 'required|exists:clients,id',
+            'service_id' => 'required|exists:services,id',
+            'mount' => 'required|numeric',
+            'advancement' => 'nullable|numeric',
+            'reservation_time' => 'required|date_format:Y-m-d H:i:s',
+            'reservation_end_time' => 'required|date_format:Y-m-d H:i:s',
+        ]);
+
+        $reservation = Reservation::create($request->all());
+        return response()->json($reservation, 201);
+    }
+
+    public function show($id)
+    {
+        $reservation = Reservation::with(['user', 'client', 'service'])->findOrFail($id);
+
+        return response()->json($reservation);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'user_id' => 'sometimes|exists:users,id',
+            'client_id' => 'sometimes|exists:clients,id',
+            'service_id' => 'sometimes|exists:services,id',
+            'mount' => 'sometimes|numeric',
+            'advancement' => 'nullable|numeric',
+            'reservation_time' => 'sometimes|date_format:Y-m-d H:i:s',
+            'reservation_end_time' => 'sometimes|date_format:Y-m-d H:i:s',
+            ]);
+
+        $reservation = Reservation::findOrFail($id);
+        $reservation->update($request->all());
+
+        return response()->json($reservation);
+    }
+
+    public function destroy($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        $reservation->delete();
+
+        return response()->json(null, 204);
+    }
+}
