@@ -6,6 +6,7 @@ use App\Http\Controllers\JWTController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\UserAcountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +28,7 @@ Route::post("login", [JWTController::class, "login"]);
 
 Route::group([
     "middleware" => ["auth:api"]
-], function(){
+], function () {
 
     Route::get("profile", [JWTController::class, "profile"]);
     Route::get("refresh", [JWTController::class, "refreshToken"]);
@@ -48,6 +49,13 @@ Route::group([
 
 
     Route::apiResource('clients', ClientController::class);
+
+
+// Ruta para obtener los datos de la cuenta de un usuario específico
+    Route::get('/users/{userId}/account', [UserAcountController::class, 'show']);
+
+// Ruta para que un usuario realice un retiro de dinero
+    Route::post('/users/{userId}/withdraw', [UserAcountController::class, 'withdraw']);
 
 });
 

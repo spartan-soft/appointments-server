@@ -11,7 +11,10 @@ class ReservationController extends Controller
 {
     public function index()
     {
-        $reservations = Reservation::with(['user', 'client', 'service'])->get();
+        $reservations = Reservation::with(['user', 'client', 'service'])->get()->map(function ($reservation) {
+                $reservation->remaining_amount = $reservation->mount - ($reservation->advancement ?? 0);
+                return $reservation;
+            });
 
         return response()->json($reservations);
     }
