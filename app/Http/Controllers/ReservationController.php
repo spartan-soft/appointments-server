@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Reservation;
+use App\Models\Payment;
 
 use Illuminate\Support\Facades\Validator;
 
@@ -25,8 +26,7 @@ class ReservationController extends Controller
             'user_id' => 'required|exists:users,id',
             'client_id' => 'required|exists:clients,id',
             'service_id' => 'required|exists:services,id',
-            'mount' => 'required|numeric',
-            'advancement' => 'nullable|numeric',
+            'amount' => 'required|numeric',
             'reservation_time' => 'required|date_format:Y-m-d H:i:s',
             'reservation_end_time' => 'required|date_format:Y-m-d H:i:s|after:reservation_time',
         ]);
@@ -39,7 +39,13 @@ class ReservationController extends Controller
             return response()->json(['message' => 'Reservation time conflicts with an existing reservation'], 409);
         }
 
-        $reservation = Reservation::create($request->all());
+       
+        try {
+           $reservation = Reservation::create($request->all());
+        } catch (\Throwable $th) { 
+            return response()->json(['message' => 'Reservation failed','error'=>$request->all()], 500);
+        }
+        
 
         return response()->json($reservation, 201);
     }
@@ -57,7 +63,7 @@ class ReservationController extends Controller
             'user_id' => 'sometimes|exists:users,id',
             'client_id' => 'sometimes|exists:clients,id',
             'service_id' => 'sometimes|exists:services,id',
-            'mount' => 'sometimes|numeric',
+            'amount' => 'sometimes|numeric',
             'advancement' => 'nullable|numeric',
             'reservation_time' => 'sometimes|date_format:Y-m-d H:i:s',
             'reservation_end_time' => 'sometimes|date_format:Y-m-d H:i:s|after:reservation_time',

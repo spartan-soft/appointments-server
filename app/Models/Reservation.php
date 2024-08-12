@@ -13,8 +13,7 @@ class Reservation extends Model
         'user_id',
         'client_id',
         'service_id',
-        'mount',
-        'advancement',
+        'amount',
         'reservation_time',
         'reservation_end_time',
     ];
@@ -35,5 +34,8 @@ class Reservation extends Model
     {
         return $this->belongsTo(Service::class);
     }
-
+    
+    public function payments(){
+        return $this->hasMany(Payment::class);
+    }
 }
