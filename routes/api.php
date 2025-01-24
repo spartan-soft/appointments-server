@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post("register", [JWTController::class, "register"]);
+
 Route::post("login", [JWTController::class, "login"]);
 
 Route::group([
@@ -34,6 +34,7 @@ Route::group([
     Route::get("profile", [JWTController::class, "profile"]);
     Route::get("refresh", [JWTController::class, "refreshToken"]);
     Route::get("logout", [JWTController::class, "logout"]);
+    Route::post("register", [JWTController::class, "register"]);
     Route::put('users/{id}', [JWTController::class, 'update']);
     Route::delete('user-delete/{id}', [JWTController::class, 'deleteUserById']);
 
@@ -50,7 +51,7 @@ Route::group([
 
 
     Route::apiResource('clients', ClientController::class);
-    
+
     Route::get('payment/qr', [PaymentController::class, 'getQR']) ;
     Route::post('payment',[PaymentController::class,'store']);
 
